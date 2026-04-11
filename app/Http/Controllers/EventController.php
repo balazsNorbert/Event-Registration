@@ -14,7 +14,7 @@ class EventController extends Controller
     public function index()
     {
         return inertia('Events/Index', [
-            'events' => Event::with('user')->orderBy('event_date', 'asc')->paginate(9)
+            'events' => Event::with(['user', 'attendees'])->withCount('attendees')->orderBy('event_date', 'asc')->paginate(9)
         ]);
     }
 

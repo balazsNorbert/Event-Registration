@@ -65,9 +65,33 @@
                     >
                         {{ event.description }}
                     </p>
+                    <button
+                        v-if="
+                            event.attendees &&
+                            event.attendees.some(
+                                (a) =>
+                                    Number(a.id) ===
+                                    Number($page.props.auth.user.id),
+                            )
+                        "
+                        disabled
+                        class="w-full mb-4 py-2 text-white font-semibold rounded-lg hover:bg-indigo-700 transition bg-indigo-600 cursor-not-allowed ..."
+                    >
+                        Már jelentkeztél
+                    </button>
 
                     <button
-                        class="w-full mb-4 py-2 bg-gray-100 hover:bg-indigo-600 hover:text-white text-gray-700 font-semibold rounded-lg transition duration-300"
+                        v-else-if="event.attendees_count >= event.limit"
+                        disabled
+                        class="w-full mb-4 py-2 text-white font-semibold rounded-lg hover:bg-indigo-700 transition bg-red-400 cursor-not-allowed ..."
+                    >
+                        Betelt
+                    </button>
+
+                    <button
+                        v-else
+                        @click="register(event.id)"
+                        class="w-full mb-4 py-2 text-white font-semibold rounded-lg hover:bg-indigo-700 transition bg-indigo-600 ..."
                     >
                         Jelentkezem
                     </button>
@@ -144,6 +168,21 @@ export default {
             if (confirm("Biztos hogy törölni szeretnéd?")) {
                 this.$inertia.delete(route("events.destroy", id));
             }
+        },
+        register(eventId) {
+            this.$inertia.post(
+                route("events.register", eventId),
+                {},
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        console.log("Sikerült a jelentkezés!");
+                    },
+                    onError: (errors) => {
+                        console.log("Hiba történt:", errors);
+                    },
+                },
+            );
         },
     },
 };
