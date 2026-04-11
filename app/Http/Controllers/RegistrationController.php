@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrganizerNotification;
+use App\Mail\RegistrationConfirmed;
 use App\Models\Event;
 use App\Models\Registration;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class RegistrationController extends Controller
 {
@@ -38,6 +40,9 @@ class RegistrationController extends Controller
 
             $event->refresh();
             $event->load('attendees');
+
+            Mail::to(Auth::user())->send(new RegistrationConfirmed($event, Auth::user()));
+            Mail::to($event->user)->send(new OrganizerNotification($event, Auth::user()));
 
             return back()->with('message', 'Sikeresen jelentkeztél!');
 
