@@ -12,7 +12,9 @@ class EventController extends Controller
      */
     public function index()
     {
-        //
+        return inertia('Events/Index', [
+            'events' => Event::with('user')->latest()->get()
+        ]);
     }
 
     /**
@@ -20,7 +22,7 @@ class EventController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Events/Create');
     }
 
     /**
@@ -28,7 +30,16 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+
+            $data['image_path'] = $request->file('image')->store('events', 'public');
+        }
+
+        $request->user()->events()->create($data);
+
+        return redirect()->route('dashboard')->with('message', 'Successful creation');
     }
 
     /**
@@ -44,7 +55,7 @@ class EventController extends Controller
      */
     public function edit(Event $event)
     {
-        //
+        return inertia('Events/Edit', ['event' => $event]);
     }
 
     /**
@@ -52,7 +63,14 @@ class EventController extends Controller
      */
     public function update(Request $request, Event $event)
     {
-        //
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('events', 'public');
+        }
+
+        $event->update($data);
+        return redirect()->route('events.index')->with('message', 'Event updated!');
     }
 
     /**
@@ -60,6 +78,7 @@ class EventController extends Controller
      */
     public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return redirect()->route('events.index')->with('message', 'Event deleted!');
     }
 }
