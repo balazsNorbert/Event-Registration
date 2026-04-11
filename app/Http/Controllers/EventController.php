@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreEventRequest;
 
 class EventController extends Controller
 {
@@ -13,7 +13,7 @@ class EventController extends Controller
     public function index()
     {
         return inertia('Events/Index', [
-            'events' => Event::with('user')->latest()->get()
+            'events' => Event::with('user')->orderBy('event_date', 'asc')->paginate(9)
         ]);
     }
 
@@ -28,7 +28,7 @@ class EventController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreEventRequest $request)
     {
         $data = $request->validated();
 
@@ -39,7 +39,7 @@ class EventController extends Controller
 
         $request->user()->events()->create($data);
 
-        return redirect()->route('dashboard')->with('message', 'Successful creation');
+        return redirect()->route('events.index')->with('message', 'Sikeres mentés!');
     }
 
     /**
@@ -61,7 +61,7 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Event $event)
+    public function update(StoreEventRequest $request, Event $event)
     {
         $data = $request->validated();
 
@@ -70,7 +70,7 @@ class EventController extends Controller
         }
 
         $event->update($data);
-        return redirect()->route('events.index')->with('message', 'Event updated!');
+        return redirect()->route('events.index')->with('message', 'Sikeres frissítés!');
     }
 
     /**
@@ -79,6 +79,6 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         $event->delete();
-        return redirect()->route('events.index')->with('message', 'Event deleted!');
+        return redirect()->route('events.index')->with('message', 'Sikeres törlés!');
     }
 }
