@@ -71,7 +71,7 @@
                             event.attendees.some(
                                 (a) =>
                                     Number(a.id) ===
-                                    Number($page.props.auth.user.id),
+                                    Number($page.props.auth.user?.id),
                             )
                         "
                         disabled
