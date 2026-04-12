@@ -32,7 +32,7 @@ Ez egy Laravel + Inertia.js + Vue.js (Options API) alapú full-stack eseménykez
 ---
 **1. Repo klónozása:**
 ```bash
-git clone https://github.com/felhasznalonev/repo-neve.git
+git clone https://github.com/balazsNorbert/Event-Registration.git
 cd repo-neve
 ```
 **2. Függőségek telepítése:**
