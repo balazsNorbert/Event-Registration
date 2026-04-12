@@ -23,11 +23,11 @@ class StoreEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'name' => 'required|string|min:5|max:255',
+            'description' => 'nullable|string|max:5000',
             'event_date' => 'required|date|after:today',
             'limit' => 'required|integer|min:1',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
         ];
     }
 }

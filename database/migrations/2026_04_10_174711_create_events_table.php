@@ -19,6 +19,7 @@ return new class extends Migration
             $table->dateTime('event_date');
             $table->integer('limit');
             $table->string('image_path')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

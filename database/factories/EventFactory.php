@@ -22,7 +22,7 @@ class EventFactory extends Factory
             'user_id' => User::first()->id ?? User::factory(),
             'name' => fake()->sentence(3),
             'description' => fake()->paragraph(),
-            'event_date' => fake()->dateTimeBetween('now', '+3 month'),
+            'event_date' => fake()->dateTimeBetween('+1 day', '+3 month'),
             'limit' => fake()->numberBetween(10, 1000),
             'image_path' => 'events/test.jpg',
         ];
