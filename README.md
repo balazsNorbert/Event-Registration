@@ -1,58 +1,195 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+**Esemény regisztrációs rendszer**
+---
+Ez egy Laravel + Inertia.js + Vue.js (Options API) alapú full-stack eseménykezelő és regisztrációs rendszer. A projekt célja egy biztonságos és skálázható megoldás nyújtása események hirdetésére és azokra való jelentkezésre.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Főbb jellemzők**
+---
+**Teljes CRUD:** Események létrehozása, szerkesztése, megtekintése és törlése (Soft Delete).
 
-## About Laravel
+**Biztonság:** Laravel Policy alapú jogosultságkezelés (csak a tulajdonos módosíthat).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Jelentkezési rendszer:** Tranzakció alapú (lockForUpdate) jelentkezés a race condition elkerülése érdekében.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**Értesítések:** Automatikus e-mail visszaigazolás a jelentkezőnek és értesítés a szervezőnek (Queue/ShouldQueue használatával).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Publikus REST API:** Verziózott (v1), throttolt API végpontok az események eléréséhez.
 
-## Learning Laravel
+**Modern Frontend:** Inertia.js Vue.js Options API-val, Tailwind CSS formázással.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Technológiai stack**
+---
+**Backend:** Laravel
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Frontend:** Vue.js (Options API), Inertia.js
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+**Stílus:** Tailwind CSS
 
-## Agentic Development
+**Adatbázis:** MySQL
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+**Sorbanállás (Queue):** Database driver
 
+**Telepítési lépések**
+---
+**1. Repo klónozása:**
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/felhasznalonev/repo-neve.git
+cd repo-neve
 ```
+**2. Függőségek telepítése:**
+```bash
+composer install
+npm install
+```
+**3. Környezeti beállítások:**
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+**4. Adatbázis migráció és feltöltés:**
+```bash
+php artisan migrate --seed
+```
+**5. Storage link létrehozása:**
+```bash
+php artisan storage:link
+```
+**6. E-mail beállítás (Fejlesztéshez):**
+```bash
+MAIL_MAILER=log
+QUEUE_CONNECTION=database
+```
+**7. Alkalmazás indítása:**
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Egyik terminálban:
+```bash
+npm run dev
+```
+Másik terminálban:
+```bash
+php artisan serve
+```
+Harmadik terminálban a levelek kiküldéséhez:
+```bash
+php artisan queue:work
+```
+**Felhasználó a seedelés után:**
 
-## Contributing
+John@email.com / password
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+**API Végpontok**
+---
+Az API publikus, auth nem szükséges, de rate limit (throttle) védi.
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**1. Események listázása**
+GET /api/v1/events
+**Leírás:** Visszaadja a jövőbeli eseményeket lapozva.
+**Válasz példa:**
+```json
+{
+  "data": [
+    {
+      "id": 3,
+      "title": "Molestias cupiditate odio vel velit.",
+      "description": "Laboriosam ut quam dolores dignissimos tenetur sed qui. Ea minus et veritatis error a non tempora. Est necessitatibus et quia quasi. Ut unde velit autem veritatis est tenetur.",
+      "event_date": "2026-04-15 09:11",
+      "max_limit": 445,
+      "available_slots": 445,
+      "organizer": {
+        "id": 1,
+        "name": "John Bobby"
+      },
+      "image": "https://event-registration.test/storage/events/test.jpg",
+      "links": {
+        "self": "https://event-registration.test/api/v1/events/3"
+      }
+    },
+    {...},
+    {
+      "id": 17,
+      "title": "Asperiores earum molestiae.",
+      "description": "Eum aliquid sed voluptatum accusamus nihil nesciunt. Quasi dolor ut et quasi est. Dolorem est optio esse ut ad rerum.",
+      "event_date": "2026-05-07 07:29",
+      "max_limit": 251,
+      "available_slots": 251,
+      "organizer": {
+        "id": 1,
+        "name": "John Bobby"
+      },
+      "image": "https://event-registration.test/storage/events/test.jpg",
+      "links": {
+        "self": "https://event-registration.test/api/v1/events/17"
+      }
+    }
+  ],
+  "links": {
+    "first": "https://event-registration.test/api/v1/events?page=1",
+    "last": "https://event-registration.test/api/v1/events?page=3",
+    "prev": null,
+    "next": "https://event-registration.test/api/v1/events?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 3,
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "page": null,
+        "active": false
+      },
+      {
+        "url": "https://event-registration.test/api/v1/events?page=1",
+        "label": "1",
+        "page": 1,
+        "active": true
+      },
+      {
+        "url": "https://event-registration.test/api/v1/events?page=2",
+        "label": "2",
+        "page": 2,
+        "active": false
+      },
+      {
+        "url": "https://event-registration.test/api/v1/events?page=3",
+        "label": "3",
+        "page": 3,
+        "active": false
+      },
+      {
+        "url": "https://event-registration.test/api/v1/events?page=2",
+        "label": "Next &raquo;",
+        "page": 2,
+        "active": false
+      }
+    ],
+    "path": "https://event-registration.test/api/v1/events",
+    "per_page": 9,
+    "to": 9,
+    "total": 20
+  }
+}
+```
+**2. Esemény részletei**
+GET /api/v1/events/1
+**Válasz:** Részletes objektum az esemény adataival vagy 404 hiba.
+```json
+{
+  "data": {
+    "id": 1,
+    "title": "Accusamus repudiandae libero et.",
+    "description": "Velit hic impedit qui repudiandae explicabo suscipit et. Dolore ratione aut voluptatum dolore. Cupiditate non vitae nostrum corrupti in voluptatibus.",
+    "event_date": "2026-06-13 13:36",
+    "max_limit": 34,
+    "available_slots": 34,
+    "organizer": {
+      "id": 1,
+      "name": "John Bobby"
+    },
+    "image": "https://event-registration.test/storage/events/test.jpg",
+    "links": {
+      "self": "https://event-registration.test/api/v1/events/1"
+    }
+  }
+}
+```
